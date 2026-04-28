@@ -22,7 +22,7 @@ const RagisterPage = () => {
             callbackURL: "/",
         });
         if(error){
-            alert('User Alredy SignUp')
+            alert(error.message)
         }
         if(res){
             alert("Singup Success Full")

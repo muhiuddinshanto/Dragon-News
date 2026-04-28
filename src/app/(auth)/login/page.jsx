@@ -21,7 +21,7 @@ const LoginPage = () => {
             callbackURL: "/",
         });
          if(error){
-            alert('User Alredy SignUp')
+            alert(error.message)
         }
         if(res){
             alert("Login Success Full")
