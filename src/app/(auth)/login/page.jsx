@@ -20,6 +20,12 @@ const LoginPage = () => {
             rememberMe: true,
             callbackURL: "/",
         });
+         if(error){
+            alert('User Alredy SignUp')
+        }
+        if(res){
+            alert("Login Success Full")
+        }
 
         console.log(res, error);
 
