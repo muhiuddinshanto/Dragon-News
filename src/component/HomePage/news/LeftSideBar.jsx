@@ -13,7 +13,7 @@ const LeftSideBar = ({ categories, activeId }) => {
 
                 {categories.news_category.map((category) => {
 
-                    console.log(category, 'category'); // ✅ এখানে থাকবে
+                    
 
                     return (
                         <li

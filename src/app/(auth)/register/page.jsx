@@ -1,9 +1,88 @@
-
+'use client'
+import { authClient } from "@/lib/auth-client";
+import Link from "next/link";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { FaEye } from "react-icons/fa";
+import { LuEyeClosed } from "react-icons/lu";
 
 const RagisterPage = () => {
+
+    const { register, handleSubmit, formState: { errors } } = useForm();
+    const [isShowPassword, setIsShowPassword] = useState(true);
+
+    console.log(errors, "errors");
+    const handleLoginFunc = async (data) => {
+        const { email, name, photo, password } = data;
+        const { data: res, error } = await authClient.signUp.email({
+            name: name,
+            email: email,
+            password: password,
+            image: photo,
+            callbackURL: "/",
+        });
+        if(error){
+            alert('User Alredy SignUp')
+        }
+        if(res){
+            alert("Singup Success Full")
+        }
+
+        console.log(res, error);
+
+    }
+
     return (
-        <div>
-            Register
+        <div className="container mx-auto min-h-[80vh] flex justify-center items-center bg-slate-100">
+            <div className="rounded-xl py-20 px-40 bg-white ">
+                <h2 className="font-bold text-xl text-center pb-4">Ragister your account</h2>
+                <div className="divider"></div>
+                <form className="space-y-4" onSubmit={handleSubmit(handleLoginFunc)}>
+                    <fieldset className="fieldset">
+                        <legend className="fieldset-legend font-bold">Name</legend>
+                        <input
+                            type="text"
+                            className="input"
+                            placeholder="Enter your Name address"
+                            {...register("name", { required: 'Name Fill Is Requerd' })}
+                        />
+                        {errors.name && <p className="text-red-500">{errors.name.message}</p>}
+                    </fieldset>
+                    <fieldset className="fieldset">
+                        <legend className="fieldset-legend font-bold">Photo URL</legend>
+                        <input
+                            type="text"
+                            className="input"
+                            placeholder="Enter your Photo URL"
+                            {...register("photo", { required: 'Photo Fill Is Requerd' })}
+                        />
+                        {errors.photo && <p className="text-red-500">{errors.photo.message}</p>}
+                    </fieldset>
+                    <fieldset className="fieldset">
+                        <legend className="fieldset-legend font-bold">Email address</legend>
+                        <input
+                            type="email"
+                            className="input"
+                            placeholder="Enter your email address"
+                            {...register("email", { required: 'Email Fill Is Requerd' })}
+                        />
+                        {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+                    </fieldset>
+                    <fieldset className="fieldset relative">
+                        <legend className="fieldset-legend font-bold" >Password</legend>
+                        <input
+                            type={isShowPassword ? "text" : "password"}
+                            className="input"
+                            placeholder="Enter your password"
+                            {...register("password", { required: 'Password Fill Is Requerd' })}
+                        />
+                        <span onClick={()=>setIsShowPassword(!isShowPassword)} className="absolute right-2 top-[18px] ">{isShowPassword ? <FaEye /> : <LuEyeClosed />}</span>
+                        {errors.password && <p className="text-red-500">{errors.password.message}</p>}
+                    </fieldset>
+                    <button className="btn w-full bg-slate-800 text-white">Ragister</button>
+                </form>
+                <p className="mt-4">Dont’t Have An Account ? <Link href="/register" className="text-red-400">Register</Link> </p>
+            </div>
         </div>
     );
 };

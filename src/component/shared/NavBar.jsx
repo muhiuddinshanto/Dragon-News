@@ -1,12 +1,20 @@
+"use client"
 import Image from "next/image";
 import Link from "next/link";
-import user from "@/assets/user.png";
+import userLOGO from "@/assets/user.png";
 import NavLink from "./NavLink";
+import { authClient } from "@/lib/auth-client";
 
 const NavBar = () => {
+
+    const { data: session, isPending } = authClient.useSession();
+    const user = session?.user;
+    console.log(user, isPending);
+
+
     return (
         <div className="container mx-auto mt-6 px-4">
-            
+
             {/* MAIN NAV */}
             <div className="flex items-center justify-between">
 
@@ -25,12 +33,15 @@ const NavBar = () => {
                 </div>
 
                 {/* RIGHT */}
-                <div className="flex items-center gap-3">
-                    <Image src={user} width={40} height={40} alt="user" />
-                    <button className="btn bg-[#403F3F] text-white">
+                {isPending ? <div ><span className="loading loading-ring loading-xl"></span></div> : user ? <div className="flex items-center gap-3">
+                    <h3>hello, {user?.name}</h3>
+                    <Image src={user?.image || userLOGO} width={40} height={40} alt="user" className="rounded-full" />
+                    <button className="btn" onClick={async()=>await authClient.signOut()}>Logout</button>
+                </div> :
+                <button className="btn bg-[#403F3F] text-white">
                         <Link href="/login">Login</Link>
                     </button>
-                </div>
+                }
             </div>
 
             {/* MOBILE MENU */}

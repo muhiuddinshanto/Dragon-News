@@ -1,7 +1,25 @@
+"use client"
+import { authClient } from '@/lib/auth-client';
 import React from 'react';
 import { FaFacebookF, FaInstagram, FaTwitter } from 'react-icons/fa';
 
 const RighSideBar = () => {
+
+
+    const handleGoogleSingin = async () => {
+        const data = await authClient.signIn.social({
+            provider: "google",
+        });
+        console.log(data);
+    };
+
+    const handleGithubSingin = async () => {
+        const data = await authClient.signIn.social({
+            provider: "github",
+        });
+        console.log(data);
+    };
+
     return (
         <div className="space-y-6">
 
@@ -12,12 +30,12 @@ const RighSideBar = () => {
                 <div className="flex flex-col gap-3">
 
                     {/* Google */}
-                    <button className="btn bg-white text-black border-[#e5e5e5] w-full">
+                    <button onClick={handleGoogleSingin} className="btn bg-white text-black border-[#e5e5e5] w-full">
                         Google Login
                     </button>
 
                     {/* GitHub */}
-                    <button className="btn bg-black text-white border-black w-full">
+                    <button onClick={handleGithubSingin} className="btn bg-black text-white border-black w-full">
                         GitHub Login
                     </button>
 
