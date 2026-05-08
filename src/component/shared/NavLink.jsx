@@ -7,6 +7,7 @@ const NavLink = ({ href, children }) => {
     const pathname = usePathname();
     const isActive = href === pathname;
 
+
     return (
         <Link 
             href={href} 
@@ -25,5 +26,6 @@ const NavLink = ({ href, children }) => {
         </Link>
     );
 };
+
 
 export default NavLink;
