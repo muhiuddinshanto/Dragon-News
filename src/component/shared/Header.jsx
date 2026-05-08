@@ -21,7 +21,7 @@ const Header = () => {
             <p className='text-gray-500 text-lg italic font-medium'>
                 Journalism Without Fear or Favour
             </p>
-            
+        
             <div className='inline-block bg-gray-100 px-6 py-2 rounded-lg shadow-sm border border-gray-200'>
                 <p className='text-[#403F3F] font-semibold'>
                     <span className='text-gray-600 font-bold'>Date:</span> {format(new Date(), "EEEE, MMMM dd, yyyy")}
@@ -29,6 +29,7 @@ const Header = () => {
             </div>
         </div>
     );
+    
 };
 
 export default Header;
