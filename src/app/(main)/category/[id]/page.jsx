@@ -5,53 +5,71 @@ import { getCategory, getNewByCategoryID } from '@/lib/data';
 import React from 'react';
 
 const NewsCategoryPage = async ({ params }) => {
-
     const { id } = await params;
 
-    const categories = await getCategory();
-    const news = await getNewByCategoryID(id);
+    // প্যারালাল ডেটা ফেচিং (পারফরম্যান্স উন্নত করবে)
+    const [categories, news] = await Promise.all([
+        getCategory(),
+        getNewByCategoryID(id)
+    ]);
+
+    // বর্তমান ক্যাটাগরির নাম খুঁজে বের করা
+    const currentCategory = categories.find(cat => cat.category_id === id);
 
     return (
-        <div>
+        <main className="min-h-screen bg-white">
+            <div className="container mx-auto px-4 py-8 lg:py-12">
+                
+                {/* Main Layout Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 container mx-auto my-10 lg:my-20 px-4">
+                    {/* --- LEFT SIDEBAR (Category List) --- */}
+                    <aside className="lg:col-span-3 order-2 lg:order-1">
+                        <h2 className="font-bold text-xl mb-4 text-[#403F3F]">All Category</h2>
+                        <div className="sticky top-20">
+                            <LeftSideBar categories={categories} activeId={id} />
+                        </div>
+                    </aside>
 
-                {/* Left Sidebar */}
-                <div className="col-span-1 lg:col-span-3 space-y-4">
-                    <LeftSideBar categories={categories} activeId={id} />
-                </div>
+                    {/* --- MAIN CONTENT (News Feed) --- */}
+                    <section className="lg:col-span-6 order-1 lg:order-2 space-y-6">
+                        <div className="flex items-center justify-between border-b pb-4">
+                            <h2 className="font-bold text-xl lg:text-2xl text-[#403F3F]">
+                                {currentCategory ? `${currentCategory.category_name} News` : "Dragon News Home"}
+                            </h2>
+                            <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                                {news.length} Articles Found
+                            </span>
+                        </div>
 
-                {/* Main Content */}
-                <div className="col-span-1 lg:col-span-6 space-y-3">
-
-                    <h2 className='p-4 font-bold text-xl lg:text-2xl'>
-                        Dragon News Home
-                    </h2>
-
-                    <div className="space-y-3">
-
-                        {
-                            news.length > 0
-                                ? news.map((n) => (
+                        <div className="space-y-6">
+                            {news.length > 0 ? (
+                                news.map((n) => (
                                     <NewsCard key={n._id} news={n} />
                                 ))
-                                : <h2 className='text-center text-xl lg:text-2xl font-bold pt-5'>
-                                    No News Found
-                                </h2>
-                        }
+                            ) : (
+                                <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
+                                    <div className="bg-gray-50 p-10 rounded-full">
+                                        <svg className="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l4 4v10a2 2 0 01-2 2z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 2v4a2 2 0 002 2h4" />
+                                        </svg>
+                                    </div>
+                                    <h3 className="text-2xl font-bold text-gray-400">No News Available in this Category</h3>
+                                    <p className="text-gray-500">Please check back later or explore other categories.</p>
+                                </div>
+                            )}
+                        </div>
+                    </section>
 
-                    </div>
+                    {/* --- RIGHT SIDEBAR --- */}
+                    <aside className="lg:col-span-3 order-3">
+                        <RighSideBar />
+                    </aside>
 
                 </div>
-
-                {/* Right Sidebar */}
-                <div className="col-span-1 lg:col-span-3">
-                    <RighSideBar />
-                </div>
-
             </div>
-
-        </div>
+        </main>
     );
 };
 

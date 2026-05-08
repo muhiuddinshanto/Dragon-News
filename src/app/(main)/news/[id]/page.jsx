@@ -10,94 +10,96 @@ export async function generateMetadata({ params }) {
     const news = await getNewsByID(id);
 
     return {
-        title: news.title,
-        description: news.details,
+        title: `${news?.title} | Dragon News`,
+        description: news?.details?.slice(0, 160),
     };
 }
 
 const NewsDetailsPage = async ({ params }) => {
-
     const { id } = await params;
     const news = await getNewsByID(id);
 
+    if (!news) return <div className="text-center py-20">News not found!</div>;
+
     return (
-        <div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 container mx-auto px-4 my-10 lg:my-0">
-
-                {/* MAIN CONTENT */}
-                <div className="card bg-base-100 shadow-sm col-span-1 lg:col-span-9">
-
-                    <div className="card-body">
-
-                        {/* AUTHOR */}
-                        <div className='flex flex-col sm:flex-row bg-[#F3F3F3] p-3.5 rounded-t-xl justify-between sm:items-center gap-3'>
-
-                            <div className='flex gap-2 items-center'>
-                                <Image
-                                    src={news.author?.img}
-                                    width={40}
-                                    height={40}
-                                    alt={news.author.name}
-                                    className='rounded-full'
-                                />
-
-                                <div>
-                                    <p className="text-sm sm:text-base">{news.author.name}</p>
-                                    <p className="text-xs sm:text-sm">
-                                        {new Date(news.author.published_date).toLocaleDateString()}
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className='flex gap-2 text-xl'>
-                                <CiBookmark />
-                                <CiShare2 />
-                            </div>
-
-                        </div>
-
-                        {/* TITLE */}
-                        <h2 className="card-title text-base sm:text-xl">
-                            {news.title}
+        <main className="min-h-screen bg-gray-50 py-8">
+            <div className="container mx-auto px-4">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    
+                    {/* --- MAIN CONTENT (Left Side) --- */}
+                    <article className="lg:col-span-9 space-y-6">
+                        <h2 className="font-bold text-2xl md:text-3xl text-[#403F3F] leading-tight">
+                            Dragon News
                         </h2>
 
-                        {/* IMAGE */}
-                        <figure className='px-2'>
-                            <Image
-                                src={news.image_url}
-                                width={525}
-                                height={250}
-                                alt={news.title}
-                                className='w-full h-auto'
-                            />
-                        </figure>
+                        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+                            {/* Header Image */}
+                            <div className="p-6">
+                                <div className="relative w-full aspect-video rounded-lg overflow-hidden mb-6">
+                                    <Image
+                                        src={news.image_url}
+                                        fill
+                                        alt={news.title}
+                                        className="object-cover"
+                                        priority
+                                    />
+                                </div>
 
-                        {/* DETAILS */}
-                        <p className="text-sm sm:text-base">
-                            {news.details}
-                        </p>
+                                {/* Title */}
+                                <h1 className="text-2xl md:text-4xl font-bold text-[#403F3F] mb-6 leading-snug">
+                                    {news.title}
+                                </h1>
 
-                        {/* BUTTON */}
-                        <Link href={`/category/${news.category_id}`}>
-                            <button className="btn bg-[#D72050] text-white mt-4 flex items-center gap-2">
-                                <FaLongArrowAltLeft />
-                                All news in this category
-                            </button>
-                        </Link>
+                                {/* Author & Share (Mobile Friendly) */}
+                                <div className="flex flex-wrap items-center justify-between gap-4 bg-gray-50 p-4 rounded-lg mb-6 border border-gray-100">
+                                    <div className="flex items-center gap-3">
+                                        <Image
+                                            src={news.author?.img}
+                                            width={45}
+                                            height={45}
+                                            alt={news.author?.name}
+                                            className="rounded-full ring-2 ring-white shadow-sm"
+                                        />
+                                        <div>
+                                            <p className="font-bold text-[#403F3F]">{news.author?.name}</p>
+                                            <p className="text-xs text-gray-500">
+                                                {news.author?.published_date ? new Date(news.author.published_date).toDateString() : "Unknown Date"}
+                                            </p>
+                                        </div>
+                                    </div>
 
-                    </div>
+                                    <div className="flex gap-4 text-gray-500">
+                                        <button className="hover:text-black transition-colors"><CiBookmark size={24} /></button>
+                                        <button className="hover:text-black transition-colors"><CiShare2 size={24} /></button>
+                                    </div>
+                                </div>
+
+                                {/* News Details */}
+                                <div className="prose max-w-none text-gray-600 leading-relaxed space-y-4 text-base md:text-lg">
+                                    {news.details}
+                                </div>
+
+                                {/* Back Button */}
+                                <div className="mt-8 border-t pt-6">
+                                    <Link href={`/category/${news.category_id}`}>
+                                        <button className="group flex items-center gap-2 bg-[#D72050] hover:bg-[#b51b44] text-white px-6 py-3 font-semibold rounded-none transition-all">
+                                            <FaLongArrowAltLeft className="group-hover:-translate-x-1 transition-transform" />
+                                            All news in this category
+                                        </button>
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    {/* --- RIGHT SIDEBAR --- */}
+                    <aside className="lg:col-span-3">
+                        <RighSideBar />
+                    </aside>
 
                 </div>
-
-                {/* RIGHT SIDEBAR */}
-                <div className="col-span-1 lg:col-span-3">
-                    <RighSideBar />
-                </div>
-
             </div>
-
-        </div>
+        </main>
     );
 };
 
