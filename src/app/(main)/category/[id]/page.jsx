@@ -5,13 +5,27 @@ import { getCategory, getNewByCategoryID } from '@/lib/data';
 import React from 'react';
 
 const NewsCategoryPage = async ({ params }) => {
+    // Next.js-এর নতুন ভার্সনে params-কে await করতে হয়
     const { id } = await params;
 
-    // প্যারালাল ডেটা ফেচিং (পারফরম্যান্স উন্নত করবে)
-    const [categories, news] = await Promise.all([
+    // প্যারালাল ডেটা ফেচিং
+    const [categoriesData, newsData] = await Promise.all([
         getCategory(),
         getNewByCategoryID(id)
     ]);
+
+    /**
+     * এরর হ্যান্ডেলিং: 
+     * আপনার এপিআই যদি সরাসরি অ্যারে না পাঠিয়ে অবজেক্ট পাঠায় (যেমন: {data: [...]}), 
+     * তবে আমরা Array.isArray দিয়ে চেক করে আসল অ্যারেটি বের করে নেব।
+     */
+    const categories = Array.isArray(categoriesData) 
+        ? categoriesData 
+        : categoriesData?.data || [];
+
+    const news = Array.isArray(newsData) 
+        ? newsData 
+        : newsData?.data || [];
 
     // বর্তমান ক্যাটাগরির নাম খুঁজে বের করা
     const currentCategory = categories.find(cat => cat.category_id === id);
@@ -27,6 +41,7 @@ const NewsCategoryPage = async ({ params }) => {
                     <aside className="lg:col-span-3 order-2 lg:order-1">
                         <h2 className="font-bold text-xl mb-4 text-[#403F3F]">All Category</h2>
                         <div className="sticky top-20">
+                            {/* categories এবং activeId প্রপস হিসেবে পাঠানো হচ্ছে */}
                             <LeftSideBar categories={categories} activeId={id} />
                         </div>
                     </aside>

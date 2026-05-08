@@ -6,7 +6,7 @@ It provides category-based news filtering, dynamic routing, and a clean responsi
 ---
 
 ## 🚀 Live Demo
-https://dragon-news-neon.vercel.app/
+https://news-next-alpha.vercel.app/
 
 ---
 
